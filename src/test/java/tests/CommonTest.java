@@ -1,17 +1,15 @@
 package tests;
 
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import steps.EclipsoEuSteps;
 import steps.ProtonMeSteps;
 
-import static tests.EclipsoEuMailTests.ECLIPSO_LOGIN;
-import static tests.EclipsoEuMailTests.PASSWORD;
-import static tests.ProtonMeMailTests.PROTONME_LOGIN;
+import static tests.EclipsoEuMailTest.ECLIPSO_LOGIN;
+import static tests.EclipsoEuMailTest.PASSWORD;
+import static tests.ProtonMeMailTest.PROTONME_LOGIN;
 
-public class CommonTests {
+public class CommonTest {
 
     public void sendingOfEmail(String sender, String pass, String reciever, String subject, String message) {
         ProtonMeSteps protonMeSteps = new ProtonMeSteps();

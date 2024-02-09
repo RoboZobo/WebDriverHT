@@ -7,7 +7,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import steps.EclipsoEuSteps;
 
-public class EclipsoEuMailTests {
+public class EclipsoEuMailTest {
 
     EclipsoEuSteps eclipsoEuSteps;
     public static final String PASSWORD = "justForTest999_";

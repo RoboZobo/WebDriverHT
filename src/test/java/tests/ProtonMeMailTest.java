@@ -8,9 +8,7 @@ import org.testng.annotations.Test;
 import steps.EclipsoEuSteps;
 import steps.ProtonMeSteps;
 
-import static tests.EclipsoEuMailTests.ECLIPSO_LOGIN;
-
-public class ProtonMeMailTests {
+public class ProtonMeMailTest {
 
     private ProtonMeSteps protonMeSteps;
     private EclipsoEuSteps eclipsoEuSteps;
