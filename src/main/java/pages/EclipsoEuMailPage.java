@@ -5,7 +5,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 @Getter
-public class EclipsoEuMailPage extends BasePage{
+public class EclipsoEuMailPage extends BasePage {
 
     @FindBy(name = "email_full")
     public WebElement loginInputField;
@@ -28,8 +28,8 @@ public class EclipsoEuMailPage extends BasePage{
     @FindBy(xpath = "//a[@title='Email']")
     public WebElement mailIcon;
 
-    @FindBy(xpath = "//tr//div[@class='sender unread']")
-    public WebElement unreadMail;
+    @FindBy(xpath = "//tbody/tr[1][contains(@id,'mail')]/td/i[@class='fas fa-envelope']")
+    public WebElement lastEmail;
 
     @FindBy(xpath = "//div[@class='previewMailHeader']//div[2]/a[1]")
     public WebElement sender;
@@ -40,4 +40,10 @@ public class EclipsoEuMailPage extends BasePage{
     @FindBy(xpath = "//div[contains(@id,'MailText')]")
     public WebElement iframeTextMessage;
 
+    @FindBy(xpath = "//button[@title='Update']")
+    public WebElement updateReceivedEmails;
+
+    public EclipsoEuMailPage(String driverName) {
+        super(driverName);
+    }
 }

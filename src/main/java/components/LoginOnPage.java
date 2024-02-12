@@ -28,7 +28,6 @@ public class LoginOnPage {
     }
 
     public void inputPassword(String password) {
-        passwordInputField.clear();
         passwordInputField.sendKeys(password);
     }
 }

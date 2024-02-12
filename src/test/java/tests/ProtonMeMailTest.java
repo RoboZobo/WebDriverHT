@@ -16,9 +16,9 @@ public class ProtonMeMailTest {
     public static final String PROTONME_LOGIN = "caraqa@proton.me";
 
     @BeforeMethod
-    public void openPage() {
+    public void openProtonMePage() {
         protonMeSteps = new ProtonMeSteps();
-        protonMeSteps.openProtonMeMailLoginPage();
+        protonMeSteps.openProtonMeMailLoginPage("chrome");
     }
 
     @AfterMethod

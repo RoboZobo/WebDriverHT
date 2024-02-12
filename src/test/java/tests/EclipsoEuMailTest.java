@@ -16,7 +16,7 @@ public class EclipsoEuMailTest {
     @BeforeMethod
     public void openPage() {
         eclipsoEuSteps = new EclipsoEuSteps();
-        eclipsoEuSteps.openEclipsoEuMailPage();
+        eclipsoEuSteps.openEclipsoEuMailPage("firefox");
         eclipsoEuSteps.acceptAllCookies();
     }
 

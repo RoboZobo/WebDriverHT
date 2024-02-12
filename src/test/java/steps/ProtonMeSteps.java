@@ -1,18 +1,14 @@
 package steps;
 
 import components.LoginOnPage;
-import org.openqa.selenium.interactions.Action;
-import org.openqa.selenium.interactions.Actions;
 import pages.ProtonMeMailPage;
-
-import static pages.BasePage.cleanInputElement;
 
 public class ProtonMeSteps {
 
     public ProtonMeMailPage protonMeMailPage;
 
-    public void openProtonMeMailLoginPage() {
-        protonMeMailPage = new ProtonMeMailPage();
+    public void openProtonMeMailLoginPage(String driverName) {
+        protonMeMailPage = new ProtonMeMailPage(driverName);
         protonMeMailPage.openPage("https://account.proton.me/login");
         protonMeMailPage.waitForElement(protonMeMailPage.getLoginInputField(), 5);
     }

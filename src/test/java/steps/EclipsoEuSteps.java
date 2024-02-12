@@ -1,14 +1,17 @@
 package steps;
 
 import components.LoginOnPage;
+import lombok.extern.java.Log;
+import org.openqa.selenium.StaleElementReferenceException;
 import pages.EclipsoEuMailPage;
 
+@Log
 public class EclipsoEuSteps {
 
     public EclipsoEuMailPage eclipsoEuMailPage;
 
-    public void openEclipsoEuMailPage() {
-        eclipsoEuMailPage = new EclipsoEuMailPage();
+    public void openEclipsoEuMailPage(String driverName) {
+        eclipsoEuMailPage = new EclipsoEuMailPage(driverName);
         eclipsoEuMailPage.openPage("https://www.eclipso.eu/login");
     }
 
@@ -32,8 +35,7 @@ public class EclipsoEuSteps {
     }
 
     public boolean isNoticeDisplayed() {
-        return eclipsoEuMailPage.waitForElement(eclipsoEuMailPage.getNoticeMessage(), 5)
-                .isDisplayed();
+        return eclipsoEuMailPage.waitForElement(eclipsoEuMailPage.getNoticeMessage(), 5).isDisplayed();
     }
 
     public boolean isLoginInputFieldDisplayed() {
@@ -41,17 +43,25 @@ public class EclipsoEuSteps {
     }
 
     public void openInboxOnEclipsoEuMailPage() {
-        eclipsoEuMailPage.getMenu().click();
+        eclipsoEuMailPage.waitForElement(eclipsoEuMailPage.getMenu(), 3).click();
         eclipsoEuMailPage.getMailIcon().click();
-        eclipsoEuMailPage.waitForElement(eclipsoEuMailPage.getUnreadMail(), 30);
+        eclipsoEuMailPage.removeAdsWithJavascript("ads");
+        eclipsoEuMailPage.waitForElement(eclipsoEuMailPage.getMailIcon(), 10).click();
+        eclipsoEuMailPage.waitForElementWithClick(eclipsoEuMailPage.getLastEmail(), eclipsoEuMailPage.getUpdateReceivedEmails(), 50, 5);
     }
 
     public boolean isEmailUnread() {
-        return eclipsoEuMailPage.getUnreadMail().isDisplayed();
+        return eclipsoEuMailPage.getLastEmail().isDisplayed();
     }
 
     public void clickOnUreadEmail() {
-        eclipsoEuMailPage.getUnreadMail().click();
+        for (int i = 0; i < 5; i++) {
+            try {
+                eclipsoEuMailPage.getLastEmail().click();
+            } catch (StaleElementReferenceException e) {
+                log.info("Unread Mail is unreacheable: " + e);
+            }
+        }
     }
 
     public String getSenderMail() {

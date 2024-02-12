@@ -1,12 +1,12 @@
 package pages;
 
-import lombok.Data;
+import lombok.Getter;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 import java.util.List;
 
-@Data
+@Getter
 public class ProtonMeMailPage extends BasePage {
 
     public final String newMessageButtonXpathLocator = "//button[contains(text(),'New message')]";
@@ -45,4 +45,7 @@ public class ProtonMeMailPage extends BasePage {
     @FindBy(xpath = "//span[contains(@class,'notification__content')]")
     public WebElement notification;
 
+    public ProtonMeMailPage(String driverName) {
+        super(driverName);
+    }
 }

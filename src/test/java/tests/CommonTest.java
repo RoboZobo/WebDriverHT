@@ -1,6 +1,7 @@
 package tests;
 
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 import steps.EclipsoEuSteps;
 import steps.ProtonMeSteps;
@@ -11,9 +12,11 @@ import static tests.ProtonMeMailTest.PROTONME_LOGIN;
 
 public class CommonTest {
 
+    EclipsoEuSteps eclipsoEuSteps;
+
     public void sendingOfEmail(String sender, String pass, String reciever, String subject, String message) {
         ProtonMeSteps protonMeSteps = new ProtonMeSteps();
-        protonMeSteps.openProtonMeMailLoginPage();
+        protonMeSteps.openProtonMeMailLoginPage("firefox");
         protonMeSteps.loginOnProtonMeMailPage(sender, pass, true);
         protonMeSteps.clickOnNewMessageButton();
         protonMeSteps.fillEmailAddress(reciever);
@@ -23,14 +26,19 @@ public class CommonTest {
         protonMeSteps.closeProtonMeMailPage();
     }
 
+    @AfterMethod
+    public void closePage() {
+        eclipsoEuSteps.closeEclipsoEuMailPage();
+    }
+
     @Test
     public void checkOfSendingEmail() {
-        EclipsoEuSteps eclipsoEuSteps = new EclipsoEuSteps();
+        eclipsoEuSteps = new EclipsoEuSteps();
         String message = "Hello, world!";
         String subject = "Hello!";
         sendingOfEmail(PROTONME_LOGIN, PASSWORD, ECLIPSO_LOGIN, subject, message);
 
-        eclipsoEuSteps.openEclipsoEuMailPage();
+        eclipsoEuSteps.openEclipsoEuMailPage("chrome");
         eclipsoEuSteps.acceptAllCookies();
         eclipsoEuSteps.loginOnEclipsoEuMailPage(ECLIPSO_LOGIN, PASSWORD);
         eclipsoEuSteps.openInboxOnEclipsoEuMailPage();
@@ -38,6 +46,5 @@ public class CommonTest {
         eclipsoEuSteps.clickOnUreadEmail();
         Assert.assertTrue(eclipsoEuSteps.getSenderMail().contains(PROTONME_LOGIN));
         Assert.assertTrue(eclipsoEuSteps.getTextFromIframeMail().contains(message));
-        eclipsoEuSteps.closeEclipsoEuMailPage();
     }
 }
