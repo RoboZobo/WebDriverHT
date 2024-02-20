@@ -10,9 +10,9 @@ public class EclipsoEuSteps {
 
     public EclipsoEuMailPage eclipsoEuMailPage;
 
-    public void openEclipsoEuMailPage(String driverName) {
+    public void openEclipsoEuMailPage(String driverName, String loginUrl) {
         eclipsoEuMailPage = new EclipsoEuMailPage(driverName);
-        eclipsoEuMailPage.openPage("https://www.eclipso.eu/login");
+        eclipsoEuMailPage.openPage(loginUrl);
     }
 
     public void acceptAllCookies() {

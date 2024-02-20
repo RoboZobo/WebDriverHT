@@ -1,22 +1,36 @@
 package tests;
 
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.MediaEntityBuilder;
+import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.markuputils.ExtentColor;
+import com.aventstack.extentreports.markuputils.MarkupHelper;
+import config_reader.ConfigReader;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import report.ExtentReportTest;
 import steps.EclipsoEuSteps;
+import util.GetScreenShot;
 
-public class EclipsoEuMailTest {
+import static util.DateTimeConvertor.getCurrentDateTimeForScreenshot;
+
+public class EclipsoEuMailTest extends ExtentReportTest {
 
     EclipsoEuSteps eclipsoEuSteps;
-    public static final String PASSWORD = "justForTest999_";
-    public static final String ECLIPSO_LOGIN = "johnqa@eclipso.eu";
+
+    @BeforeSuite
+    public void getConfig() {
+        ConfigReader.getConfiguration("eclipso");
+    }
 
     @BeforeMethod
     public void openPage() {
         eclipsoEuSteps = new EclipsoEuSteps();
-        eclipsoEuSteps.openEclipsoEuMailPage("firefox");
+        eclipsoEuSteps.openEclipsoEuMailPage("firefox", ConfigReader.getProperty("loginUrl"));
         eclipsoEuSteps.acceptAllCookies();
     }
 
@@ -27,7 +41,7 @@ public class EclipsoEuMailTest {
 
     @DataProvider(name = "incorrectLoginPasswordPairs")
     public static Object[][] incorrectLoginPasswordPairs() {
-        return new Object[][] {{ECLIPSO_LOGIN, "123"}, {"johnqa@ecliso.eu", PASSWORD}};
+        return new Object[][] {{ConfigReader.getProperty("login"), "123"}, {"johnqa@ecliso.eu", ConfigReader.getProperty("password")}};
     }
 
     @DataProvider(name = "emptyLoginPasswordPairs")
@@ -35,16 +49,27 @@ public class EclipsoEuMailTest {
         return new Object[][] {{"", "123"}, {"caraqa@protn.me", ""}};
     }
 
+    public void assertTrueWithReport(ExtentTest logger, boolean condition) {
+        if (condition) {
+            logger.log(Status.PASS, MarkupHelper.createLabel(logger.getModel().getDescription(), ExtentColor.GREEN));
+        } else {
+            logger.log(Status.FAIL, MediaEntityBuilder.createScreenCaptureFromPath(GetScreenShot.capture(getCurrentDateTimeForScreenshot())).build());
+        }
+        Assert.assertTrue(condition);
+    }
+
     @Test(dataProvider = "incorrectLoginPasswordPairs")
     public void signInPageWithIncorrectCredsTest(String login, String password) {
+        ExtentTest test = extent.createTest("signInPageWithIncorrectCredsTest", "Incorrect login and password pairs");
         eclipsoEuSteps.loginOnEclipsoEuMailPage(login, password);
-        Assert.assertTrue(eclipsoEuSteps.isNoticeDisplayed());
+        assertTrueWithReport(test, eclipsoEuSteps.isNoticeDisplayed());
     }
 
     @Test(dataProvider = "emptyLoginPasswordPairs")
     public void signInPageWithEmptyCredsTest(String login, String password) {
+        ExtentTest test = extent.createTest("signInPageWithEmptyCredsTest", "Empty login and password pairs");
         eclipsoEuSteps.loginOnEclipsoEuMailPage(login, password);
-        Assert.assertTrue(eclipsoEuSteps.isLoginInputFieldDisplayed());
+        assertTrueWithReport(test, !eclipsoEuSteps.isLoginInputFieldDisplayed());
     }
 
 }

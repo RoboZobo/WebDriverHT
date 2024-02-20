@@ -1,22 +1,26 @@
 package tests;
 
+import config_reader.ConfigReader;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import steps.EclipsoEuSteps;
 import steps.ProtonMeSteps;
 
-import static tests.EclipsoEuMailTest.ECLIPSO_LOGIN;
-import static tests.EclipsoEuMailTest.PASSWORD;
-import static tests.ProtonMeMailTest.PROTONME_LOGIN;
-
 public class CommonTest {
 
     EclipsoEuSteps eclipsoEuSteps;
+    private String protonUrl;
+    private String protonLogin;
+    private String protonPass;
+    private String eclipsoUrl;
+    private String eclipsoLogin;
+    private String eclipsoPass;
 
     public void sendingOfEmail(String sender, String pass, String reciever, String subject, String message) {
         ProtonMeSteps protonMeSteps = new ProtonMeSteps();
-        protonMeSteps.openProtonMeMailLoginPage("firefox");
+        protonMeSteps.openProtonMeMailLoginPage("firefox", protonUrl);
         protonMeSteps.loginOnProtonMeMailPage(sender, pass, true);
         protonMeSteps.clickOnNewMessageButton();
         protonMeSteps.fillEmailAddress(reciever);
@@ -24,6 +28,18 @@ public class CommonTest {
         protonMeSteps.fillMessageBodyWithText(message);
         protonMeSteps.clickOnSendMessageButton();
         protonMeSteps.closeProtonMeMailPage();
+    }
+
+    @BeforeMethod
+    public void getConfig() {
+        ConfigReader.getConfiguration("proton");
+        protonUrl = ConfigReader.getProperty("loginUrl");
+        protonLogin = ConfigReader.getProperty("login");
+        protonPass = ConfigReader.getProperty("password");
+        ConfigReader.getConfiguration("eclipso");
+        eclipsoUrl = ConfigReader.getProperty("loginUrl");
+        eclipsoLogin = ConfigReader.getProperty("login");
+        eclipsoPass = ConfigReader.getProperty("password");
     }
 
     @AfterMethod
@@ -36,15 +52,15 @@ public class CommonTest {
         eclipsoEuSteps = new EclipsoEuSteps();
         String message = "Hello, world!";
         String subject = "Hello!";
-        sendingOfEmail(PROTONME_LOGIN, PASSWORD, ECLIPSO_LOGIN, subject, message);
+        sendingOfEmail(protonLogin, protonPass, eclipsoLogin, subject, message);
 
-        eclipsoEuSteps.openEclipsoEuMailPage("chrome");
+        eclipsoEuSteps.openEclipsoEuMailPage("chrome", eclipsoUrl);
         eclipsoEuSteps.acceptAllCookies();
-        eclipsoEuSteps.loginOnEclipsoEuMailPage(ECLIPSO_LOGIN, PASSWORD);
+        eclipsoEuSteps.loginOnEclipsoEuMailPage(eclipsoLogin, eclipsoPass);
         eclipsoEuSteps.openInboxOnEclipsoEuMailPage();
         Assert.assertTrue(eclipsoEuSteps.isEmailUnread());
         eclipsoEuSteps.clickOnUreadEmail();
-        Assert.assertTrue(eclipsoEuSteps.getSenderMail().contains(PROTONME_LOGIN));
+        Assert.assertTrue(eclipsoEuSteps.getSenderMail().contains(protonLogin));
         Assert.assertTrue(eclipsoEuSteps.getTextFromIframeMail().contains(message));
     }
 }

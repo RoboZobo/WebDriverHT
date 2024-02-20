@@ -7,9 +7,9 @@ public class ProtonMeSteps {
 
     public ProtonMeMailPage protonMeMailPage;
 
-    public void openProtonMeMailLoginPage(String driverName) {
+    public void openProtonMeMailLoginPage(String driverName, String loginUrl) {
         protonMeMailPage = new ProtonMeMailPage(driverName);
-        protonMeMailPage.openPage("https://account.proton.me/login");
+        protonMeMailPage.openPage(loginUrl);
         protonMeMailPage.waitForElement(protonMeMailPage.getLoginInputField(), 5);
     }
 

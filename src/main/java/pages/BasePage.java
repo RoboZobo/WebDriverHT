@@ -10,18 +10,18 @@ import org.openqa.selenium.PageLoadStrategy;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import util.GetScreenShot;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.Duration;
 
 @Getter
@@ -32,16 +32,12 @@ public abstract class BasePage extends PageFactory {
     protected Actions actions;
 
     public BasePage(String driverName) {
-        try {
-            this.driver = new RemoteWebDriver(new URL("http://localhost:4444/"),
-                    "firefox".equals(driverName)
-                            ? new FirefoxOptions().setPageLoadStrategy(PageLoadStrategy.NORMAL)
-                            : new ChromeOptions().setPageLoadStrategy(PageLoadStrategy.NORMAL));
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
+        this.driver = "firefox".equals(driverName)
+                        ? new FirefoxDriver(new FirefoxOptions().setPageLoadStrategy(PageLoadStrategy.NORMAL))
+                        : new ChromeDriver((ChromeOptions) new ChromeOptions().setPageLoadStrategy(PageLoadStrategy.NORMAL));
         PageFactory.initElements(driver, this);
         actions = new Actions(driver);
+        GetScreenShot.setWebDriverForCapture(driver);
     }
 
     public void openPage(String URL) {

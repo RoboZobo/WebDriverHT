@@ -1,5 +1,6 @@
 package tests;
 
+import config_reader.ConfigReader;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -12,13 +13,12 @@ public class ProtonMeMailTest {
 
     private ProtonMeSteps protonMeSteps;
     private EclipsoEuSteps eclipsoEuSteps;
-    private static final String PASSWORD = "justForTest999_";
-    public static final String PROTONME_LOGIN = "caraqa@proton.me";
 
     @BeforeMethod
     public void openProtonMePage() {
+        ConfigReader.getConfiguration("proton");
         protonMeSteps = new ProtonMeSteps();
-        protonMeSteps.openProtonMeMailLoginPage("chrome");
+        protonMeSteps.openProtonMeMailLoginPage("chrome", ConfigReader.getProperty("loginUrl"));
     }
 
     @AfterMethod
@@ -28,7 +28,7 @@ public class ProtonMeMailTest {
 
     @DataProvider(name = "incorrectLoginPasswordPairs")
     public static Object[][] incorrectLoginPasswordPairs() {
-        return new Object[][] {{PROTONME_LOGIN, "123"}, {"caraqa@protn.me", PASSWORD}};
+        return new Object[][] {{ConfigReader.getProperty("login"), "123"}, {"caraqa@protn.me", ConfigReader.getProperty("password")}};
     }
 
     @Test(dataProvider = "incorrectLoginPasswordPairs")
