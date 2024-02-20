@@ -69,7 +69,7 @@ public class EclipsoEuMailTest extends ExtentReportTest {
     public void signInPageWithEmptyCredsTest(String login, String password) {
         ExtentTest test = extent.createTest("signInPageWithEmptyCredsTest", "Empty login and password pairs");
         eclipsoEuSteps.loginOnEclipsoEuMailPage(login, password);
-        assertTrueWithReport(test, !eclipsoEuSteps.isLoginInputFieldDisplayed());
+        assertTrueWithReport(test, eclipsoEuSteps.isLoginInputFieldDisplayed());
     }
 
 }
