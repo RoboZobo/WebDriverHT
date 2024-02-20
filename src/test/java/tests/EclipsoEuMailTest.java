@@ -9,7 +9,7 @@ import config_reader.ConfigReader;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import report.ExtentReportTest;
@@ -22,7 +22,7 @@ public class EclipsoEuMailTest extends ExtentReportTest {
 
     EclipsoEuSteps eclipsoEuSteps;
 
-    @BeforeSuite
+    @BeforeTest
     public void getConfig() {
         ConfigReader.getConfiguration("eclipso");
     }
@@ -46,7 +46,7 @@ public class EclipsoEuMailTest extends ExtentReportTest {
 
     @DataProvider(name = "emptyLoginPasswordPairs")
     public static Object[][] emptyLoginPasswordPairs() {
-        return new Object[][] {{"", "123"}, {"caraqa@protn.me", ""}};
+        return new Object[][] {{"", "123"}, {ConfigReader.getProperty("login"), ""}};
     }
 
     public void assertTrueWithReport(ExtentTest logger, boolean condition) {
