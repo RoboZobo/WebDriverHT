@@ -4,6 +4,7 @@ import config_reader.ConfigReader;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import steps.EclipsoEuSteps;
@@ -14,9 +15,12 @@ public class ProtonMeMailTest {
     private ProtonMeSteps protonMeSteps;
     private EclipsoEuSteps eclipsoEuSteps;
 
+    @BeforeSuite
+    public void getConfig() {
+        ConfigReader.getConfiguration("proton");
+    }
     @BeforeMethod
     public void openProtonMePage() {
-        ConfigReader.getConfiguration("proton");
         protonMeSteps = new ProtonMeSteps();
         protonMeSteps.openProtonMeMailLoginPage("chrome", ConfigReader.getProperty("loginUrl"));
     }
