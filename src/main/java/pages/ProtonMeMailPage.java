@@ -43,7 +43,7 @@ public class ProtonMeMailPage extends BasePage {
     public WebElement sendEmailButton;
 
     @FindBy(xpath = "//span[contains(@class,'notification__content')]")
-    public WebElement notification;
+    public List<WebElement> notification;
 
     public ProtonMeMailPage(String driverName) {
         super(driverName);

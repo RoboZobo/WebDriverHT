@@ -18,13 +18,13 @@ public class ProtonMeMailTest {
 
     @BeforeTest
     public void getConfig() {
-        ConfigReader.getConfiguration("proton");
+        ConfigReader.getInstance().getConfiguration("proton");
     }
 
     @BeforeMethod
     public void openProtonMePage() {
         protonMeSteps = new ProtonMeSteps();
-        protonMeSteps.openProtonMeMailLoginPage("chrome", ConfigReader.getProperty("loginUrl"));
+        protonMeSteps.openProtonMeMailLoginPage("chrome", ConfigReader.getInstance().getProperty("loginUrl"));
     }
 
     @AfterMethod
@@ -34,11 +34,10 @@ public class ProtonMeMailTest {
 
     @DataProvider(name = "incorrectLoginPasswordPairs")
     public static Object[][] incorrectLoginPasswordPairs() {
-        return new Object[][] {{ConfigReader.getProperty("login"), "123"}, {"caraqa@protn.me", ConfigReader.getProperty("password")}};
+        return new Object[][] {{ConfigReader.getInstance().getProperty("login"), "123"}, {"caraqa@protn.me", ConfigReader.getInstance().getProperty("password")}};
     }
 
     @Test(dataProvider = "incorrectLoginPasswordPairs")
-    @Ignore
     public void signInPageWithIncorrectCredsTest(String login, String password) {
         protonMeSteps.loginOnProtonMeMailPage(login, password, true);
         Assert.assertTrue(protonMeSteps.isAlertMessageDisplayed());

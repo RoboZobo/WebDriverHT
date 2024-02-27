@@ -10,15 +10,24 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.stream.Stream;
 
+//Singleton
 @Getter
 public class ConfigReader {
+
+    private static ConfigReader instance;
+    private Properties properties = new Properties();
 
     private ConfigReader() {
     }
 
-    private static Properties properties;
+    public static ConfigReader getInstance() {
+        if (instance == null) {
+            instance = new ConfigReader();
+        }
+        return instance;
+    }
 
-    private static String getPropertyPath(String name) {
+    private String getPropertyPath(String name) {
         String dir = ".\\src\\test\\java\\configurations\\";
         return dir.concat(Stream.of(new File(dir).listFiles())
                 .filter(file -> !file.isDirectory())
@@ -27,7 +36,7 @@ public class ConfigReader {
                 .findFirst().orElseThrow());
     }
 
-    public static void getConfiguration(String name) {
+    public void getConfiguration(String name) {
         BufferedReader reader;
         String propertyPath = getPropertyPath(name);
         try {
@@ -45,7 +54,7 @@ public class ConfigReader {
         }
     }
 
-    public static String getProperty(String propertyName) {
+    public String getProperty(String propertyName) {
         return properties.getProperty(propertyName);
     }
 }

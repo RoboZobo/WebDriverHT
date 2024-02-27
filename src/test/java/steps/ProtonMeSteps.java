@@ -56,7 +56,7 @@ public class ProtonMeSteps {
 
     public void clickOnSendMessageButton() {
         protonMeMailPage.getSendEmailButton().click();
-        protonMeMailPage.waitForElementDisappearing(protonMeMailPage.getNotification(), 25);
+        protonMeMailPage.waitForElementsDisappearing(protonMeMailPage.getNotification(), 25);
     }
 
     public void fillEmailSubject(String subject) {

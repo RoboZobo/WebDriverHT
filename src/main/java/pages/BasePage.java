@@ -1,5 +1,6 @@
 package pages;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.Getter;
 import lombok.extern.java.Log;
 import org.openqa.selenium.By;
@@ -21,23 +22,39 @@ import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import util.GetScreenShot;
+import util.GetScreenShotDecorator;
 
 import java.time.Duration;
+import java.util.List;
 
 @Getter
 @Log
 public abstract class BasePage extends PageFactory {
-
-    protected WebDriver driver;
     protected Actions actions;
+    protected WebDriver driver;
+
+    protected GetScreenShot getScreenShot;
+
+    //Factory method
+    protected WebDriver createDriver(String driverName) {
+        if ("firefox".equalsIgnoreCase(driverName)) {
+            WebDriverManager.firefoxdriver().setup();
+            FirefoxOptions options = new FirefoxOptions().setPageLoadStrategy(PageLoadStrategy.NORMAL);
+            return new FirefoxDriver(options);
+        } else if ("chrome".equalsIgnoreCase(driverName)) {
+            WebDriverManager.chromedriver().setup();
+            ChromeOptions options = new ChromeOptions().setPageLoadStrategy(PageLoadStrategy.NORMAL);
+            return new ChromeDriver(options);
+        } else {
+            throw new IllegalArgumentException("Invalid driver name: " + driverName);
+        }
+    }
 
     public BasePage(String driverName) {
-        this.driver = "firefox".equals(driverName)
-                        ? new FirefoxDriver(new FirefoxOptions().setPageLoadStrategy(PageLoadStrategy.NORMAL))
-                        : new ChromeDriver((ChromeOptions) new ChromeOptions().setPageLoadStrategy(PageLoadStrategy.NORMAL));
+        this.driver = createDriver(driverName);
         PageFactory.initElements(driver, this);
         actions = new Actions(driver);
-        GetScreenShot.setWebDriverForCapture(driver);
+        getScreenShot = new GetScreenShot(driver);
     }
 
     public void openPage(String URL) {
@@ -80,12 +97,12 @@ public abstract class BasePage extends PageFactory {
         }
     }
 
-    public void waitForElementDisappearing(WebElement element, int waitInSeconds) {
-        new WebDriverWait(driver, Duration.ofSeconds(waitInSeconds)).until(ExpectedConditions.invisibilityOf(element));
+    public void waitForElementsDisappearing(List<WebElement> element, int waitInSeconds) {
+        new WebDriverWait(driver, waitInSeconds).until(ExpectedConditions.invisibilityOfAllElements(element));
     }
 
     public void waitForOneOfElements(String firstElementLocator, String secondElementLocator, int waitInSeconds) {
-        Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(waitInSeconds));
+        Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(waitInSeconds).getSeconds());
         wait.until(ExpectedConditions.or(ExpectedConditions.visibilityOfElementLocated(By.xpath(firstElementLocator)),
                 ExpectedConditions.visibilityOfElementLocated(By.xpath(secondElementLocator))));
     }
@@ -108,5 +125,9 @@ public abstract class BasePage extends PageFactory {
 
     public void sendKeysWithAction(WebElement element, String message) {
         actions.click(element).doubleClick().sendKeys(message).build().perform();
+    }
+
+    public String createDecoratedScreenShot(String name) {
+        return new GetScreenShotDecorator(getScreenShot).capture(name);
     }
 }

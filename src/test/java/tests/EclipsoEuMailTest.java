@@ -14,9 +14,6 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import report.ExtentReportTest;
 import steps.EclipsoEuSteps;
-import util.GetScreenShot;
-
-import static util.DateTimeConvertor.getCurrentDateTimeForScreenshot;
 
 public class EclipsoEuMailTest extends ExtentReportTest {
 
@@ -24,13 +21,13 @@ public class EclipsoEuMailTest extends ExtentReportTest {
 
     @BeforeTest
     public void getConfig() {
-        ConfigReader.getConfiguration("eclipso");
+        ConfigReader.getInstance().getConfiguration("eclipso");
     }
 
     @BeforeMethod
     public void openPage() {
         eclipsoEuSteps = new EclipsoEuSteps();
-        eclipsoEuSteps.openEclipsoEuMailPage("firefox", ConfigReader.getProperty("loginUrl"));
+        eclipsoEuSteps.openEclipsoEuMailPage("firefox", ConfigReader.getInstance().getProperty("loginUrl"));
         eclipsoEuSteps.acceptAllCookies();
     }
 
@@ -41,19 +38,19 @@ public class EclipsoEuMailTest extends ExtentReportTest {
 
     @DataProvider(name = "incorrectLoginPasswordPairs")
     public static Object[][] incorrectLoginPasswordPairs() {
-        return new Object[][] {{ConfigReader.getProperty("login"), "123"}, {"johnqa@ecliso.eu", ConfigReader.getProperty("password")}};
+        return new Object[][] {{ConfigReader.getInstance().getProperty("login"), "123"}, {"johnqa@ecliso.eu", ConfigReader.getInstance().getProperty("password")}};
     }
 
     @DataProvider(name = "emptyLoginPasswordPairs")
     public static Object[][] emptyLoginPasswordPairs() {
-        return new Object[][] {{"", "123"}, {ConfigReader.getProperty("login"), ""}};
+        return new Object[][] {{"", "123"}, {ConfigReader.getInstance().getProperty("login"), ""}};
     }
 
     public void assertTrueWithReport(ExtentTest logger, boolean condition) {
         if (condition) {
             logger.log(Status.PASS, MarkupHelper.createLabel(logger.getModel().getDescription(), ExtentColor.GREEN));
         } else {
-            logger.log(Status.FAIL, MediaEntityBuilder.createScreenCaptureFromPath(GetScreenShot.capture(getCurrentDateTimeForScreenshot())).build());
+            logger.log(Status.FAIL, MediaEntityBuilder.createScreenCaptureFromPath(eclipsoEuSteps.createScreenShot()).build());
         }
         Assert.assertTrue(condition);
     }

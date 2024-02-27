@@ -1,5 +1,6 @@
 package util;
 
+import lombok.NoArgsConstructor;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -8,16 +9,15 @@ import org.openqa.selenium.WebDriver;
 import java.io.File;
 import java.io.IOException;
 
+@NoArgsConstructor
 public class GetScreenShot {
     private static WebDriver driverForCapture;
-    private GetScreenShot() {
-    };
 
-    public static void setWebDriverForCapture(WebDriver driver) {
+    public GetScreenShot(WebDriver driver) {
         driverForCapture = driver;
     }
 
-    public static String capture(String screenShotName) {
+    public String capture(String screenShotName) {
         TakesScreenshot ts = (TakesScreenshot) driverForCapture;
         File source = ts.getScreenshotAs(OutputType.FILE);
         String fileName = screenShotName + ".png";

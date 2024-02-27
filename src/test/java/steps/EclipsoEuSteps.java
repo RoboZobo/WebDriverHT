@@ -91,4 +91,8 @@ public class EclipsoEuSteps {
         eclipsoEuMailPage.getDriver().switchTo().defaultContent();
         return textFromIframeMail;
     }
+
+    public String createScreenShot() {
+        return eclipsoEuMailPage.createDecoratedScreenShot(eclipsoEuMailPage.getTitleOfPage());
+    }
 }

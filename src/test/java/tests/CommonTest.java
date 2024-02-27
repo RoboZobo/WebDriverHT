@@ -9,8 +9,64 @@ import steps.EclipsoEuSteps;
 import steps.ProtonMeSteps;
 
 public class CommonTest {
+//
+//    EclipsoEuSteps eclipsoEuSteps;
+//    private String protonUrl;
+//    private String protonLogin;
+//    private String protonPass;
+//    private String eclipsoUrl;
+//    private String eclipsoLogin;
+//    private String eclipsoPass;
+//
+//    public void sendingOfEmail(String sender, String pass, String reciever, String subject, String message) {
+//        ProtonMeSteps protonMeSteps = new ProtonMeSteps();
+//        protonMeSteps.openProtonMeMailLoginPage("firefox", protonUrl);
+//        protonMeSteps.loginOnProtonMeMailPage(sender, pass, true);
+//        protonMeSteps.clickOnNewMessageButton();
+//        protonMeSteps.fillEmailAddress(reciever);
+//        protonMeSteps.fillEmailSubject(subject);
+//        protonMeSteps.fillMessageBodyWithText(message);
+//        protonMeSteps.clickOnSendMessageButton();
+//        protonMeSteps.closeProtonMeMailPage();
+//    }
+//
+//    @BeforeMethod
+//    public void getConfig() {
+//        ConfigReader.getInstance().getConfiguration("proton");
+//        protonUrl = ConfigReader.getInstance().getProperty("loginUrl");
+//        protonLogin = ConfigReader.getInstance().getProperty("login");
+//        protonPass = ConfigReader.getInstance().getProperty("password");
+//        ConfigReader.getInstance().getConfiguration("eclipso");
+//        eclipsoUrl = ConfigReader.getInstance().getProperty("loginUrl");
+//        eclipsoLogin = ConfigReader.getInstance().getProperty("login");
+//        eclipsoPass = ConfigReader.getInstance().getProperty("password");
+//    }
+//
+//    @AfterMethod
+//    public void closePage() {
+//        eclipsoEuSteps.closeEclipsoEuMailPage();
+//    }
+//
+//    @Test
+//    public void checkOfSendingEmail() {
+//        eclipsoEuSteps = new EclipsoEuSteps();
+//        String message = "Hello, world!";
+//        String subject = "Hello!";
+//        sendingOfEmail(protonLogin, protonPass, eclipsoLogin, subject, message);
+//
+//        eclipsoEuSteps.openEclipsoEuMailPage("chrome", eclipsoUrl);
+//        eclipsoEuSteps.acceptAllCookies();
+//        eclipsoEuSteps.loginOnEclipsoEuMailPage(eclipsoLogin, eclipsoPass);
+//        eclipsoEuSteps.openInboxOnEclipsoEuMailPage();
+//        Assert.assertTrue(eclipsoEuSteps.isEmailUnread());
+//        eclipsoEuSteps.clickOnUreadEmail();
+//        Assert.assertTrue(eclipsoEuSteps.getSenderMail().contains(protonLogin));
+//        Assert.assertTrue(eclipsoEuSteps.getTextFromIframeMail().contains(message));
+//    }
 
-    EclipsoEuSteps eclipsoEuSteps;
+    //provided SRP
+    private EclipsoEuSteps eclipsoEuSteps;
+    private ProtonMeSteps protonMeSteps;
     private String protonUrl;
     private String protonLogin;
     private String protonPass;
@@ -18,12 +74,11 @@ public class CommonTest {
     private String eclipsoLogin;
     private String eclipsoPass;
 
-    public void sendingOfEmail(String sender, String pass, String reciever, String subject, String message) {
-        ProtonMeSteps protonMeSteps = new ProtonMeSteps();
+    private void sendEmail(String sender, String pass, String receiver, String subject, String message) {
         protonMeSteps.openProtonMeMailLoginPage("firefox", protonUrl);
         protonMeSteps.loginOnProtonMeMailPage(sender, pass, true);
         protonMeSteps.clickOnNewMessageButton();
-        protonMeSteps.fillEmailAddress(reciever);
+        protonMeSteps.fillEmailAddress(receiver);
         protonMeSteps.fillEmailSubject(subject);
         protonMeSteps.fillMessageBodyWithText(message);
         protonMeSteps.clickOnSendMessageButton();
@@ -31,36 +86,48 @@ public class CommonTest {
     }
 
     @BeforeMethod
-    public void getConfig() {
-        ConfigReader.getConfiguration("proton");
-        protonUrl = ConfigReader.getProperty("loginUrl");
-        protonLogin = ConfigReader.getProperty("login");
-        protonPass = ConfigReader.getProperty("password");
-        ConfigReader.getConfiguration("eclipso");
-        eclipsoUrl = ConfigReader.getProperty("loginUrl");
-        eclipsoLogin = ConfigReader.getProperty("login");
-        eclipsoPass = ConfigReader.getProperty("password");
+    public void setUp() {
+        protonMeSteps = new ProtonMeSteps();
+        eclipsoEuSteps = new EclipsoEuSteps();
+
+        loadConfigurations();
+    }
+
+    private void loadConfigurations() {
+        ConfigReader configReader = ConfigReader.getInstance();
+
+        configReader.getConfiguration("proton");
+        protonUrl = configReader.getProperty("loginUrl");
+        protonLogin = configReader.getProperty("login");
+        protonPass = configReader.getProperty("password");
+
+        configReader.getConfiguration("eclipso");
+        eclipsoUrl = configReader.getProperty("loginUrl");
+        eclipsoLogin = configReader.getProperty("login");
+        eclipsoPass = configReader.getProperty("password");
     }
 
     @AfterMethod
-    public void closePage() {
-        eclipsoEuSteps.closeEclipsoEuMailPage();
+    public void tearDown() {
+        if (eclipsoEuSteps != null) {
+            eclipsoEuSteps.closeEclipsoEuMailPage();
+        }
     }
 
     @Test
-    public void checkOfSendingEmail() {
-        eclipsoEuSteps = new EclipsoEuSteps();
-        String message = "Hello, world!";
-        String subject = "Hello!";
-        sendingOfEmail(protonLogin, protonPass, eclipsoLogin, subject, message);
+    public void checkSendingEmail() {
+        sendEmail(protonLogin, protonPass, eclipsoLogin, "Hello!", "Hello, world!");
 
         eclipsoEuSteps.openEclipsoEuMailPage("chrome", eclipsoUrl);
         eclipsoEuSteps.acceptAllCookies();
         eclipsoEuSteps.loginOnEclipsoEuMailPage(eclipsoLogin, eclipsoPass);
         eclipsoEuSteps.openInboxOnEclipsoEuMailPage();
+
         Assert.assertTrue(eclipsoEuSteps.isEmailUnread());
         eclipsoEuSteps.clickOnUreadEmail();
+
         Assert.assertTrue(eclipsoEuSteps.getSenderMail().contains(protonLogin));
-        Assert.assertTrue(eclipsoEuSteps.getTextFromIframeMail().contains(message));
+        Assert.assertTrue(eclipsoEuSteps.getTextFromIframeMail().contains("Hello, world!"));
     }
+
 }
